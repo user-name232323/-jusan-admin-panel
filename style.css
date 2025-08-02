@@ -1,0 +1,117 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #fff;
+}
+
+.header {
+  background-color: #ff6600;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 30px;
+}
+
+.logo-full img {
+  height: 52px;
+  background-color: white;
+  border-radius: 8px;
+  padding: 5px 10px;
+}
+
+.admin-text {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.user-panel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+}
+
+.user-name {
+  font-size: 14px;
+  color: white;
+}
+
+main {
+  display: flex;
+  justify-content: center;
+  margin-top: 60px;
+}
+
+.login-box {
+  border: 1px solid #ccc;
+  border-radius: 16px;
+  padding: 30px;
+  width: 350px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.login-header {
+  text-align: center;
+}
+
+.login-header img {
+  width: 150px;
+}
+
+.login-header h1 {
+  margin-top: 10px;
+}
+
+.input-group {
+  margin-bottom: 15px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #bbb;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+button {
+  background-color: #ff6600;
+  color: white;
+  border: none;
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #e65500;
+}
+
+.help-link {
+  display: block;
+  margin-top: 15px;
+  text-align: center;
+  font-size: 12px;
+  color: #777;
+  text-decoration: none;
+}
+
+.help-link:hover {
+  text-decoration: underline;
+}
