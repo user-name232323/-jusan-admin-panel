@@ -1,12 +1,11 @@
 document.getElementById('loginForm').addEventListener('submit', function(e) {
   e.preventDefault();
-  
-  const email = document.getElementById('email').value;
+
+  const login = document.getElementById('login').value;
   const pass = document.getElementById('password').value;
 
-  if (email && pass) {
-    alert(`Вход выполнен для ${email}`);
-    // Здесь можно сделать запрос на сервер
+  if (login && pass) {
+    alert(`Вход выполнен для пользователя: ${login}`);
   } else {
     alert("Пожалуйста, заполните все поля");
   }
