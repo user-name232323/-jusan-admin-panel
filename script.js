@@ -1,7 +1,7 @@
 document.getElementById("loginForm").addEventListener("submit", async function(event) {
-  event.preventDefault(); // Отключаем стандартное поведение формы
+  event.preventDefault(); // отключаем стандартную отправку формы
 
-  const username = document.getElementById("login").value;
+  const name = document.getElementById("login").value;
   const password = document.getElementById("password").value;
 
   try {
@@ -10,21 +10,19 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ name, password }) // 👈 строго name, а не username!
     });
 
     const result = await response.json();
 
     if (result.success === true) {
-      // Сохраняем в localStorage метку авторизации
       localStorage.setItem("admin_logged_in", "true");
-      // Переход в админ-панель
       window.location.href = "dashboard.html";
     } else {
-      alert("Неверный логин или пароль");
+      alert(result.message || "Ошибка авторизации");
     }
   } catch (error) {
     console.error("Ошибка входа:", error);
-    alert("Не удалось подключиться к серверу");
+    alert("Ошибка подключения к серверу");
   }
 });
