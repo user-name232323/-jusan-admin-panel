@@ -1,38 +1,30 @@
-document.getElementById('loginForm').addEventListener('submit', async function (e) {
-  e.preventDefault();
+document.getElementById("loginForm").addEventListener("submit", async function(event) {
+  event.preventDefault(); // Отключаем стандартное поведение формы
 
-  const username = document.getElementById('login').value.trim();
-  const password = document.getElementById('password').value.trim();
-
-  if (!username || !password) {
-    alert("Пожалуйста, заполните все поля");
-    return;
-  }
+  const username = document.getElementById("login").value;
+  const password = document.getElementById("password").value;
 
   try {
-    const response = await fetch("https://jusik-servak-bd.onrender.com/admin_login", {
+    const response = await fetch("https://jusik-servak-bd.onrender.com/admin-login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        username: username,
-        password: password
-      })
+      body: JSON.stringify({ username, password })
     });
 
     const result = await response.json();
 
-    if (response.ok && result.success) {
-      alert("✅ Успешный вход!");
+    if (result.success === true) {
+      // Сохраняем в localStorage метку авторизации
       localStorage.setItem("admin_logged_in", "true");
-      window.location.href = "dashboard.html"; // <-- Замени на нужную страницу, если требуется
+      // Переход в админ-панель
+      window.location.href = "dashboard.html";
     } else {
-      alert(result.message || "❌ Неверный логин или пароль");
+      alert("Неверный логин или пароль");
     }
-
   } catch (error) {
-    console.error("Ошибка:", error);
-    alert("⚠️ Не удалось подключиться к серверу");
+    console.error("Ошибка входа:", error);
+    alert("Не удалось подключиться к серверу");
   }
 });
