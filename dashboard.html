@@ -48,20 +48,16 @@
     }
 
     main {
-      padding: 40px;
-    }
-
-    h2 {
-      color: #333;
-      margin-bottom: 10px;
+      padding: 0;
     }
 
     #requests-container {
-      margin-top: 40px;
+      margin: 0;
+      padding: 20px 40px;
       background: white;
-      border-radius: 10px;
-      padding: 20px 30px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+      border-radius: 0;
+      box-shadow: none;
+      width: 100%;
     }
 
     #requests-list {
@@ -71,8 +67,13 @@
     }
 
     #requests-list li {
-      padding: 15px;
+      padding: 20px;
       border-bottom: 1px solid #ddd;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
     }
 
     #requests-list li:last-child {
@@ -82,15 +83,18 @@
     .request-id {
       font-weight: bold;
       color: #ff6600;
+      min-width: 60px;
     }
 
     .request-subject {
       font-weight: 600;
-      margin-right: 5px;
+      color: #333;
+      flex: 1;
     }
 
     .request-desc {
       color: #555;
+      flex: 3;
     }
   </style>
 </head>
@@ -107,9 +111,6 @@
   </header>
 
   <main>
-    <h2>Добро пожаловать в панель администратора</h2>
-    <p>Здесь вы можете просматривать заявки пользователей, управлять данными и выполнять административные действия.</p>
-
     <div id="requests-container">
       <h3>Заявки пользователей:</h3>
       <ul id="requests-list">
@@ -136,7 +137,7 @@
           const li = document.createElement('li');
           li.innerHTML = `
             <span class="request-id">#${request.id}</span>
-            <span class="request-subject">${request.subject}</span> —
+            <span class="request-subject">${request.subject}</span>
             <span class="request-desc">${request.description}</span>
           `;
           list.appendChild(li);
@@ -152,7 +153,6 @@
       window.location.href = "index.html";
     }
 
-    // Проверка авторизации
     if (localStorage.getItem("admin_logged_in") !== "true") {
       window.location.href = "index.html";
     } else {
