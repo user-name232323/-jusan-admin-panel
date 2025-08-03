@@ -1,10 +1,10 @@
 document.getElementById('loginForm').addEventListener('submit', async function (e) {
   e.preventDefault();
 
-  const name = document.getElementById('login').value.trim();
+  const username = document.getElementById('login').value.trim();
   const password = document.getElementById('password').value.trim();
 
-  if (!name || !password) {
+  if (!username || !password) {
     alert("Пожалуйста, заполните все поля");
     return;
   }
@@ -16,7 +16,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        name: name, // заменено с username на name
+        username: username,
         password: password
       })
     });
@@ -26,7 +26,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
     if (response.ok && result.success) {
       alert("✅ Успешный вход!");
       localStorage.setItem("admin_logged_in", "true");
-      window.location.href = "dashboard.html";
+      window.location.href = "dashboard.html"; // <-- Замени на нужную страницу, если требуется
     } else {
       alert(result.message || "❌ Неверный логин или пароль");
     }
