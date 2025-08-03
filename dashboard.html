@@ -17,6 +17,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 15px 30px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
     .logo-full img {
@@ -46,45 +47,42 @@
     }
 
     main {
-      padding: 0;
+      padding: 40px;
     }
 
-    .filter-bar {
+    h2 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    #filter-bar {
       display: flex;
-      flex-wrap: wrap;
       gap: 10px;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 40px;
-      background: white;
-      border-bottom: 1px solid #ddd;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
     }
 
-    .filters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .filters select,
-    .filters input {
+    #filter-bar select,
+    #filter-bar input[type="text"] {
       padding: 8px;
-      border-radius: 6px;
       border: 1px solid #ccc;
+      border-radius: 6px;
     }
 
-    .filters button {
-      padding: 8px 16px;
-      border: none;
-      border-radius: 6px;
+    #filter-bar button {
       background-color: #ff6600;
       color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
       cursor: pointer;
     }
 
     #requests-container {
-      padding: 20px 40px;
       background: white;
+      border-radius: 10px;
+      padding: 20px 30px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
     }
 
     #requests-list {
@@ -94,11 +92,12 @@
     }
 
     #requests-list li {
-      padding: 20px;
+      padding: 15px;
       border-bottom: 1px solid #ddd;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
+    }
+
+    #requests-list li:last-child {
+      border-bottom: none;
     }
 
     .request-id {
@@ -108,155 +107,120 @@
 
     .request-subject {
       font-weight: 600;
-      color: #333;
-      flex: 1;
+      margin-right: 5px;
     }
 
     .request-desc {
       color: #555;
-      flex: 3;
     }
   </style>
 </head>
 <body>
-  <header class="header">
-    <div class="logo-full">
-      <img src="logo_admin.png" alt="JUSAN Mobile Logo">
-    </div>
-    <div class="admin-text">Админ-панель</div>
-    <div class="user-panel">
-      <img src="logo_admin4.png" alt="User Avatar" class="user-avatar" onclick="logout()" title="Выйти">
-      <span class="user-name">Администратор</span>
-    </div>
-  </header>
+<header class="header">
+  <div class="logo-full">
+    <img src="logo_admin.png" alt="JUSAN Mobile Logo">
+  </div>
+  <div class="admin-text">Админ-панель</div>
+  <div class="user-panel">
+    <img src="logo_admin4.png" alt="User Avatar" class="user-avatar" onclick="logout()" title="Выйти">
+    <span class="user-name">Администратор</span>
+  </div>
+</header>
 
-  <main>
-    <div class="filter-bar">
-      <div class="filters">
-        <select id="filter-city">
-          <option value="">Город</option>
-        </select>
-        <select id="filter-street">
-          <option value="">Улица</option>
-        </select>
-        <input id="filter-house" type="text" placeholder="Дом">
-        <select id="filter-status">
-          <option value="">Статус</option>
-          <option value="Новая">Новая</option>
-          <option value="В работе">В работе</option>
-          <option value="Завершена">Завершена</option>
-        </select>
-      </div>
-      <div class="filters">
-        <input id="filter-search" type="text" placeholder="Поиск в описании...">
-        <button onclick="applyFilters()">Применить</button>
-      </div>
-    </div>
+<main>
+  <h2>Добро пожаловать в панель администратора</h2>
+  <div id="filter-bar">
+    <select id="filter-city"><option value="">Город</option></select>
+    <select id="filter-street"><option value="">Улица</option></select>
+    <select id="filter-status"><option value="">Статус</option><option>Новая</option></select>
+    <input type="text" id="filter-search" placeholder="Поиск...">
+    <button onclick="applyFilters()">Применить</button>
+  </div>
+  <div id="requests-container">
+    <h3>Заявки пользователей:</h3>
+    <ul id="requests-list">
+      <li>Загрузка заявок...</li>
+    </ul>
+  </div>
+</main>
 
-    <div id="requests-container">
-      <ul id="requests-list">
-        <li>Загрузка заявок...</li>
-      </ul>
-    </div>
-  </main>
+<script>
+  let allRequests = [];
 
-  <script>
-    let allRequests = [];
-
-    async function fetchRequests() {
-      try {
-        const response = await fetch("https://jusik-servak-bd.onrender.com/requests");
-        const data = await response.json();
-        allRequests = data;
-        populateCityStreetFilters(data);
-        renderRequests(data);
-      } catch (err) {
-        document.getElementById('requests-list').innerHTML = "<li>Ошибка загрузки</li>";
-        console.error(err);
-      }
+  async function fetchRequests() {
+    try {
+      const response = await fetch("https://jusik-servak-bd.onrender.com/requests");
+      const data = await response.json();
+      allRequests = data;
+      populateFilters(data);
+      renderRequests(data);
+    } catch (err) {
+      document.getElementById('requests-list').innerHTML = "<li>Ошибка загрузки</li>";
+      console.error("Ошибка загрузки заявок:", err);
     }
+  }
 
-    function populateCityStreetFilters(data) {
-      const citySet = new Set();
-      const streetSet = new Set();
+  function populateFilters(data) {
+    const citySet = new Set();
+    const streetSet = new Set();
+    data.forEach(req => {
+      const desc = req.description || "";
+      const matchCity = desc.match(/город[:,]?\s*([^,]+)/i);
+      const matchStreet = desc.match(/,\s*([^,]+),\s*дом/i);
+      if (matchCity) citySet.add(matchCity[1].trim());
+      if (matchStreet) streetSet.add(matchStreet[1].trim());
+    });
+    const citySelect = document.getElementById("filter-city");
+    const streetSelect = document.getElementById("filter-street");
+    citySelect.innerHTML = '<option value="">Город</option>' + [...citySet].map(c => `<option>${c}</option>`).join("");
+    streetSelect.innerHTML = '<option value="">Улица</option>' + [...streetSet].map(s => `<option>${s}</option>`).join("");
+  }
 
-      data.forEach(req => {
-        const matchCity = req.description.match(/город\s*[:\-]?\s*([А-Яа-яA-Za-z]+)/i);
-        const matchStreet = req.description.match(/,\s*([А-Яа-яA-Za-zёЁ\s\-]+),\s*дом/i);
-        if (matchCity) citySet.add(matchCity[1]);
-        if (matchStreet) streetSet.add(matchStreet[1]);
-      });
-
-      const citySelect = document.getElementById("filter-city");
-      citySet.forEach(city => {
-        const option = document.createElement("option");
-        option.value = city;
-        option.textContent = city;
-        citySelect.appendChild(option);
-      });
-
-      const streetSelect = document.getElementById("filter-street");
-      streetSet.forEach(street => {
-        const option = document.createElement("option");
-        option.value = street;
-        option.textContent = street;
-        streetSelect.appendChild(option);
-      });
+  function renderRequests(requests) {
+    const list = document.getElementById('requests-list');
+    list.innerHTML = "";
+    if (requests.length === 0) {
+      list.innerHTML = "<li>Нет заявок</li>";
+      return;
     }
+    requests.forEach(req => {
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <span class="request-id">#${req.id}</span>
+        <span class="request-subject">${req.subject || ""}</span> —
+        <span class="request-desc">${req.description || "(без описания)"}</span>
+      `;
+      list.appendChild(li);
+    });
+  }
 
-    function applyFilters() {
-      const city = document.getElementById("filter-city").value.toLowerCase();
-      const street = document.getElementById("filter-street").value.toLowerCase();
-      const house = document.getElementById("filter-house").value.trim();
-      const status = document.getElementById("filter-status").value.toLowerCase();
-      const search = document.getElementById("filter-search").value.toLowerCase();
+  function applyFilters() {
+    const city = document.getElementById("filter-city").value.toLowerCase();
+    const street = document.getElementById("filter-street").value.toLowerCase();
+    const status = document.getElementById("filter-status").value.toLowerCase();
+    const search = document.getElementById("filter-search").value.toLowerCase();
 
-      const filtered = allRequests.filter(req => {
-        const desc = req.description.toLowerCase();
-        const st = req.status?.toLowerCase() || "";
+    const filtered = allRequests.filter(req => {
+      const desc = (req.description || "").toLowerCase();
+      const stat = (req.status || "").toLowerCase();
+      return (!city || desc.includes(city)) &&
+             (!street || desc.includes(street)) &&
+             (!status || stat.includes(status)) &&
+             (!search || desc.includes(search) || (req.subject || "").toLowerCase().includes(search));
+    });
+    renderRequests(filtered);
+  }
 
-        return (
-          (!city || desc.includes(city)) &&
-          (!street || desc.includes(street)) &&
-          (!house || desc.includes(`дом ${house.toLowerCase()}`)) &&
-          (!status || st === status) &&
-          (!search || desc.includes(search))
-        );
-      });
+  function logout() {
+    localStorage.removeItem("admin_logged_in");
+    window.location.href = "index.html";
+  }
 
-      renderRequests(filtered);
-    }
-
-    function renderRequests(requests) {
-      const list = document.getElementById('requests-list');
-      list.innerHTML = "";
-
-      if (requests.length === 0) {
-        list.innerHTML = "<li>Нет заявок по выбранным фильтрам</li>";
-        return;
-      }
-
-      requests.forEach(request => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-          <span class="request-id">#${request.id}</span>
-          <span class="request-subject">${request.subject}</span>
-          <span class="request-desc">${request.description}</span>
-        `;
-        list.appendChild(li);
-      });
-    }
-
-    function logout() {
-      localStorage.removeItem("admin_logged_in");
-      window.location.href = "index.html";
-    }
-
-    if (localStorage.getItem("admin_logged_in") !== "true") {
-      window.location.href = "index.html";
-    } else {
-      fetchRequests();
-    }
-  </script>
+  if (localStorage.getItem("admin_logged_in") !== "true") {
+    window.location.href = "index.html";
+  } else {
+    fetchRequests();
+  }
+</script>
 </body>
 </html>
