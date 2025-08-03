@@ -40,6 +40,7 @@
       height: 40px;
       width: 40px;
       border-radius: 50%;
+      cursor: pointer;
     }
 
     .user-name {
@@ -53,20 +54,6 @@
     h2 {
       color: #333;
       margin-bottom: 10px;
-    }
-
-    .logout-btn {
-      background-color: #e74c3c;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 20px;
-    }
-
-    .logout-btn:hover {
-      background-color: #c0392b;
     }
 
     #requests-container {
@@ -114,7 +101,7 @@
     </div>
     <div class="admin-text">Админ-панель</div>
     <div class="user-panel">
-      <img src="logo_admin4.png" alt="User Avatar" class="user-avatar">
+      <img src="logo_admin4.png" alt="User Avatar" class="user-avatar" onclick="logout()" title="Выйти">
       <span class="user-name">Администратор</span>
     </div>
   </header>
@@ -122,8 +109,6 @@
   <main>
     <h2>Добро пожаловать в панель администратора</h2>
     <p>Здесь вы можете просматривать заявки пользователей, управлять данными и выполнять административные действия.</p>
-
-    <button class="logout-btn" onclick="logout()">Выйти</button>
 
     <div id="requests-container">
       <h3>Заявки пользователей:</h3>
