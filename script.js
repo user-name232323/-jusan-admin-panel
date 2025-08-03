@@ -1,10 +1,10 @@
 document.getElementById('loginForm').addEventListener('submit', async function (e) {
   e.preventDefault();
 
-  const username = document.getElementById('login').value.trim();
+  const name = document.getElementById('login').value.trim();
   const password = document.getElementById('password').value.trim();
 
-  if (!username || !password) {
+  if (!name || !password) {
     alert("Пожалуйста, заполните все поля");
     return;
   }
@@ -16,7 +16,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        username: username,
+        name: name, // заменено с username на name
         password: password
       })
     });
