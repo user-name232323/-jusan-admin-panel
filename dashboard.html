@@ -4,6 +4,108 @@
   <meta charset="UTF-8">
   <title>Jusan Admin Dashboard</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f6f8;
+    }
+
+    .header {
+      background-color: #ff6600;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 30px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .logo-full img {
+      height: 50px;
+    }
+
+    .admin-text {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .user-panel {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-avatar {
+      height: 40px;
+      width: 40px;
+      border-radius: 50%;
+    }
+
+    .user-name {
+      font-weight: 500;
+    }
+
+    main {
+      padding: 40px;
+    }
+
+    h2 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .logout-btn {
+      background-color: #e74c3c;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .logout-btn:hover {
+      background-color: #c0392b;
+    }
+
+    #requests-container {
+      margin-top: 40px;
+      background: white;
+      border-radius: 10px;
+      padding: 20px 30px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+
+    #requests-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    #requests-list li {
+      padding: 15px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    #requests-list li:last-child {
+      border-bottom: none;
+    }
+
+    .request-id {
+      font-weight: bold;
+      color: #ff6600;
+    }
+
+    .request-subject {
+      font-weight: 600;
+      margin-right: 5px;
+    }
+
+    .request-desc {
+      color: #555;
+    }
+  </style>
 </head>
 <body>
   <header class="header">
@@ -17,15 +119,13 @@
     </div>
   </header>
 
-  <main style="padding: 30px;">
+  <main>
     <h2>Добро пожаловать в панель администратора</h2>
     <p>Здесь вы можете просматривать заявки пользователей, управлять данными и выполнять административные действия.</p>
 
-    <div>
-      <button onclick="logout()">Выйти</button>
-    </div>
+    <button class="logout-btn" onclick="logout()">Выйти</button>
 
-    <div id="requests-container" style="margin-top: 30px;">
+    <div id="requests-container">
       <h3>Заявки пользователей:</h3>
       <ul id="requests-list">
         <li>Загрузка заявок...</li>
@@ -49,7 +149,11 @@
 
         data.forEach(request => {
           const li = document.createElement('li');
-          li.textContent = `Заявка #${request.id}: ${request.subject} — ${request.description}`;
+          li.innerHTML = `
+            <span class="request-id">#${request.id}</span>
+            <span class="request-subject">${request.subject}</span> —
+            <span class="request-desc">${request.description}</span>
+          `;
           list.appendChild(li);
         });
       } catch (err) {
