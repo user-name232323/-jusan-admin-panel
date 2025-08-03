@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Jusan Admin Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="logo-full">
+      <img src="logo_admin.png" alt="JUSAN Mobile Logo">
+    </div>
+    <div class="admin-text">Админ-панель</div>
+    <div class="user-panel">
+      <img src="logo_admin4.png" alt="User Avatar" class="user-avatar">
+      <span class="user-name">Администратор</span>
+    </div>
+  </header>
+
+  <main style="padding: 30px;">
+    <h2>Добро пожаловать в панель администратора</h2>
+    <p>Здесь вы можете просматривать заявки пользователей, управлять данными и выполнять административные действия.</p>
+
+    <div>
+      <button onclick="logout()">Выйти</button>
+    </div>
+
+    <div id="requests-container" style="margin-top: 30px;">
+      <h3>Заявки пользователей:</h3>
+      <ul id="requests-list">
+        <li>Загрузка заявок...</li>
+      </ul>
+    </div>
+  </main>
+
+  <script>
+    async function fetchRequests() {
+      try {
+        const response = await fetch("https://jusik-servak-bd.onrender.com/requests");
+        const data = await response.json();
+
+        const list = document.getElementById('requests-list');
+        list.innerHTML = "";
+
+        if (data.length === 0) {
+          list.innerHTML = "<li>Нет заявок</li>";
+          return;
+        }
+
+        data.forEach(request => {
+          const li = document.createElement('li');
+          li.textContent = `Заявка #${request.id}: ${request.subject} — ${request.description}`;
+          list.appendChild(li);
+        });
+      } catch (err) {
+        document.getElementById('requests-list').innerHTML = "<li>Ошибка загрузки</li>";
+        console.error(err);
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem("admin_logged_in");
+      window.location.href = "index.html";
+    }
+
+    // Проверка авторизации
+    if (localStorage.getItem("admin_logged_in") !== "true") {
+      window.location.href = "index.html";
+    } else {
+      fetchRequests();
+    }
+  </script>
+</body>
+</html>
