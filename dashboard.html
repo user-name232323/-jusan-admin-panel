@@ -9,7 +9,6 @@
       font-family: 'Segoe UI', sans-serif;
       background-color: #f4f6f8;
     }
-
     .header {
       background-color: #ff6600;
       color: white;
@@ -19,56 +18,46 @@
       padding: 15px 30px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-
     .logo-full img {
       height: 50px;
     }
-
     .admin-text {
       font-size: 24px;
       font-weight: bold;
     }
-
     .user-panel {
       display: flex;
       align-items: center;
       gap: 10px;
     }
-
     .user-avatar {
       height: 40px;
       width: 40px;
       border-radius: 50%;
       cursor: pointer;
     }
-
     .user-name {
       font-weight: 500;
     }
-
     main {
       padding: 40px;
     }
-
     h2 {
       color: #333;
       margin-bottom: 10px;
     }
-
     #filter-bar {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
       margin-bottom: 20px;
     }
-
     #filter-bar select,
     #filter-bar input[type="text"] {
       padding: 8px;
       border: 1px solid #ccc;
       border-radius: 6px;
     }
-
     #filter-bar button {
       background-color: #ff6600;
       color: white;
@@ -77,39 +66,32 @@
       border-radius: 6px;
       cursor: pointer;
     }
-
     #requests-container {
       background: white;
       border-radius: 10px;
       padding: 20px 30px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.05);
     }
-
     #requests-list {
       list-style: none;
       padding: 0;
       margin: 0;
     }
-
     #requests-list li {
       padding: 15px;
       border-bottom: 1px solid #ddd;
     }
-
     #requests-list li:last-child {
       border-bottom: none;
     }
-
     .request-id {
       font-weight: bold;
       color: #ff6600;
     }
-
     .request-subject {
       font-weight: 600;
       margin-right: 5px;
     }
-
     .request-desc {
       color: #555;
     }
@@ -132,6 +114,7 @@
   <div id="filter-bar">
     <select id="filter-city"><option value="">Город</option></select>
     <select id="filter-street"><option value="">Улица</option></select>
+    <select id="filter-house"><option value="">Дом</option></select>
     <select id="filter-status"><option value="">Статус</option><option>Новая</option></select>
     <input type="text" id="filter-search" placeholder="Поиск...">
     <button onclick="applyFilters()">Применить</button>
@@ -147,6 +130,21 @@
 <script>
   let allRequests = [];
 
+  function extractCity(description) {
+    const match = description.match(/адрес:\s*([^\s,]+)/i);
+    return match ? match[1].trim() : "";
+  }
+
+  function extractStreet(description) {
+    const match = description.match(/адрес:.*?,\s*([^,]+),/i);
+    return match ? match[1].trim() : "";
+  }
+
+  function extractHouse(description) {
+    const match = description.match(/дом\s+([^,.\n]+)/i);
+    return match ? match[1].trim() : "";
+  }
+
   async function fetchRequests() {
     try {
       const response = await fetch("https://jusik-servak-bd.onrender.com/requests");
@@ -161,19 +159,51 @@
   }
 
   function populateFilters(data) {
-    const citySet = new Set();
-    const streetSet = new Set();
+    const cities = new Set();
+    const streets = new Set();
+    const houses = new Set();
+
     data.forEach(req => {
       const desc = req.description || "";
-      const matchCity = desc.match(/город[:,]?\s*([^,]+)/i);
-      const matchStreet = desc.match(/,\s*([^,]+),\s*дом/i);
-      if (matchCity) citySet.add(matchCity[1].trim());
-      if (matchStreet) streetSet.add(matchStreet[1].trim());
+      const city = extractCity(desc);
+      const street = extractStreet(desc);
+      const house = extractHouse(desc);
+      if (city) cities.add(city);
+      if (street) streets.add(street);
+      if (house) houses.add(house);
     });
-    const citySelect = document.getElementById("filter-city");
-    const streetSelect = document.getElementById("filter-street");
-    citySelect.innerHTML = '<option value="">Город</option>' + [...citySet].map(c => `<option>${c}</option>`).join("");
-    streetSelect.innerHTML = '<option value="">Улица</option>' + [...streetSet].map(s => `<option>${s}</option>`).join("");
+
+    document.getElementById("filter-city").innerHTML =
+      '<option value="">Город</option>' + [...cities].map(c => `<option>${c}</option>`).join("");
+    document.getElementById("filter-street").innerHTML =
+      '<option value="">Улица</option>' + [...streets].map(s => `<option>${s}</option>`).join("");
+    document.getElementById("filter-house").innerHTML =
+      '<option value="">Дом</option>' + [...houses].map(h => `<option>${h}</option>`).join("");
+  }
+
+  function applyFilters() {
+    const city = document.getElementById("filter-city").value.toLowerCase();
+    const street = document.getElementById("filter-street").value.toLowerCase();
+    const house = document.getElementById("filter-house").value.toLowerCase();
+    const status = document.getElementById("filter-status").value.toLowerCase();
+    const search = document.getElementById("filter-search").value.toLowerCase();
+
+    const filtered = allRequests.filter(req => {
+      const desc = (req.description || "").toLowerCase();
+      const stat = (req.status || "").toLowerCase();
+
+      const matchCity = extractCity(desc).toLowerCase();
+      const matchStreet = extractStreet(desc).toLowerCase();
+      const matchHouse = extractHouse(desc).toLowerCase();
+
+      return (!city || matchCity === city) &&
+             (!street || matchStreet === street) &&
+             (!house || matchHouse === house) &&
+             (!status || stat === status) &&
+             (!search || desc.includes(search) || (req.subject || "").toLowerCase().includes(search));
+    });
+
+    renderRequests(filtered);
   }
 
   function renderRequests(requests) {
@@ -192,23 +222,6 @@
       `;
       list.appendChild(li);
     });
-  }
-
-  function applyFilters() {
-    const city = document.getElementById("filter-city").value.toLowerCase();
-    const street = document.getElementById("filter-street").value.toLowerCase();
-    const status = document.getElementById("filter-status").value.toLowerCase();
-    const search = document.getElementById("filter-search").value.toLowerCase();
-
-    const filtered = allRequests.filter(req => {
-      const desc = (req.description || "").toLowerCase();
-      const stat = (req.status || "").toLowerCase();
-      return (!city || desc.includes(city)) &&
-             (!street || desc.includes(street)) &&
-             (!status || stat.includes(status)) &&
-             (!search || desc.includes(search) || (req.subject || "").toLowerCase().includes(search));
-    });
-    renderRequests(filtered);
   }
 
   function logout() {
