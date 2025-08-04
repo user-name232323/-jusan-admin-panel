@@ -306,94 +306,91 @@
       const result = await response.json();
       if (response.ok && result.success) {
         showMessage(`Заявка #${requestId} обновлена успешно.`);
-        // Навсегда блокируем кнопку и меняем текст в зависимости от статуса
-        if (status_id === 2) {
-          btn.textContent = "В работе";
-        } else if (status_id === 3) {
-          btn.textContent = "Нет тех. возможности";
-        } else if (status_id === 4) {
-          btn.textContent = "Есть тех. возможность";
-        } else {
-          btn.textContent = "Обновлено";
-        }
-        btn.disabled = true;
+
+        // Обновляем статус в allRequests
+        const req = allRequests.find(r => r.id === requestId);
+        if (req) req.status = status_id;
+
+        // Перерисовываем список, чтобы кнопки обновились
+        renderRequests(allRequests);
+
       } else {
         alert(result.message || "Ошибка при обновлении статуса");
         btn.disabled = false;
-        btn.textContent = "Принять в работу";
+        // Возвращаем текст кнопки обратно (по статусу)
+        btn.textContent = getButtonTextByStatus(status_id);
       }
     } catch (err) {
       console.error("Ошибка обновления статуса:", err);
       alert("Ошибка при подключении к серверу");
       btn.disabled = false;
-      btn.textContent = "Принять в работу";
+      btn.textContent = getButtonTextByStatus(status_id);
+    }
+  }
+
+  function getButtonTextByStatus(status_id) {
+    switch (status_id) {
+      case 2: return "Принять в работу";
+      case 3: return "Нет технической возможности";
+      case 4: return "Есть тех возможность";
+      default: return "Обновить статус";
     }
   }
 
   function disableAndUpdate(button, requestId, statusId) {
     updateStatus(requestId, statusId, button);
   }
+
   function renderRequests(requests) {
-  const list = document.getElementById('requests-list');
-  list.innerHTML = "";
+    const list = document.getElementById('requests-list');
+    list.innerHTML = "";
 
-  if (requests.length === 0) {
-    list.innerHTML = "<li>Нет заявок</li>";
-    return;
-  }
-
-  requests.forEach(req => {
-    const statusName = getStatusNameById(req.status);
-    const li = document.createElement('li');
-
-    // Какие кнопки показывать:
-    // Если статус 1 или другой (кроме 2,3,4) - показать "Принять в работу"
-    // Если статус 2 - показать "Есть тех возможность" (активная кнопка)
-    // Если статус 3 - нет "Принять в работу" и "Есть тех возможность"
-    // Если статус 4 - показать "Есть тех возможность" (заблокированная)
-    
-    let btnAcceptHTML = "";
-    let btnTechPossibleHTML = "";
-    let btnNoTechPossibleHTML = "";
-
-    if (req.status === 1 || req.status === undefined) {
-      btnAcceptHTML = `<button onclick="disableAndUpdate(this, ${req.id}, 2)" style="margin-right:8px;">Принять в работу</button>`;
-      btnNoTechPossibleHTML = `<button onclick="disableAndUpdate(this, ${req.id}, 3)" style="background-color: #ccc;">Нет технической возможности</button>`;
-    } else if (req.status === 2) {
-      btnTechPossibleHTML = `<button onclick="disableAndUpdate(this, ${req.id}, 4)" style="background-color: #4caf50; color: white; margin-right:8px;">Есть тех возможность</button>`;
-      btnNoTechPossibleHTML = `<button onclick="disableAndUpdate(this, ${req.id}, 3)" style="background-color: #ccc;">Нет технической возможности</button>`;
-    } else if (req.status === 3) {
-      btnAcceptHTML = `<button disabled style="margin-right:8px; background-color:#ccc;">Принять в работу</button>`;
-      btnTechPossibleHTML = ``; // не показывать
-      btnNoTechPossibleHTML = `<button disabled style="background-color:#ccc;">Нет технической возможности</button>`;
-    } else if (req.status === 4) {
-      btnTechPossibleHTML = `<button disabled style="background-color:#4caf50; color: white; margin-right:8px;">Есть тех возможность</button>`;
-      btnNoTechPossibleHTML = `<button onclick="disableAndUpdate(this, ${req.id}, 3)" style="background-color: #ccc;">Нет технической возможности</button>`;
-    } else {
-      // На всякий случай, если статус неожиданный
-      btnAcceptHTML = `<button onclick="disableAndUpdate(this, ${req.id}, 2)" style="margin-right:8px;">Принять в работу</button>`;
-      btnNoTechPossibleHTML = `<button onclick="disableAndUpdate(this, ${req.id}, 3)" style="background-color: #ccc;">Нет технической возможности</button>`;
+    if (requests.length === 0) {
+      list.innerHTML = "<li>Нет заявок</li>";
+      return;
     }
 
-    li.innerHTML = `
-      <div>
-        <span class="request-id">#${req.id}</span>
-        <span class="request-subject">${req.subject || ""}</span> — 
-        <span class="request-desc">${req.description || "(без описания)"}</span><br>
-        <b>Статус:</b> ${statusName}
-      </div>
-      <div style="margin-top: 8px;">
-        ${btnAcceptHTML}
-        ${btnTechPossibleHTML}
-        ${btnNoTechPossibleHTML}
-      </div>
-    `;
+    requests.forEach(req => {
+      const statusName = getStatusNameById(req.status);
+      const li = document.createElement('li');
 
-    list.appendChild(li);
-  });
+      let btnAcceptHTML = "";
+      let btnTechPossibleHTML = "";
+      let btnNoTechPossibleHTML = "";
 
+      if (req.status === 1 || req.status === undefined) {
+        btnAcceptHTML = `<button onclick="disableAndUpdate(this, ${req.id}, 2)" style="margin-right:8px;">Принять в работу</button>`;
+        btnNoTechPossibleHTML = `<button onclick="disableAndUpdate(this, ${req.id}, 3)" style="background-color: #ccc;">Нет технической возможности</button>`;
+      } else if (req.status === 2) {
+        btnTechPossibleHTML = `<button onclick="disableAndUpdate(this, ${req.id}, 4)" style="background-color: #4caf50; color: white; margin-right:8px;">Есть тех возможность</button>`;
+        btnNoTechPossibleHTML = `<button onclick="disableAndUpdate(this, ${req.id}, 3)" style="background-color: #ccc;">Нет технической возможности</button>`;
+      } else if (req.status === 3) {
+        btnAcceptHTML = `<button disabled style="margin-right:8px; background-color:#ccc;">Принять в работу</button>`;
+        btnNoTechPossibleHTML = `<button disabled style="background-color:#ccc;">Нет технической возможности</button>`;
+      } else if (req.status === 4) {
+        btnTechPossibleHTML = `<button disabled style="background-color:#4caf50; color: white; margin-right:8px;">Есть тех возможность</button>`;
+        btnNoTechPossibleHTML = `<button onclick="disableAndUpdate(this, ${req.id}, 3)" style="background-color: #ccc;">Нет технической возможности</button>`;
+      } else {
+        btnAcceptHTML = `<button onclick="disableAndUpdate(this, ${req.id}, 2)" style="margin-right:8px;">Принять в работу</button>`;
+        btnNoTechPossibleHTML = `<button onclick="disableAndUpdate(this, ${req.id}, 3)" style="background-color: #ccc;">Нет технической возможности</button>`;
+      }
 
+      li.innerHTML = `
+        <div>
+          <span class="request-id">#${req.id}</span>
+          <span class="request-subject">${req.subject || ""}</span> — 
+          <span class="request-desc">${req.description || "(без описания)"}</span><br>
+          <b>Статус:</b> ${statusName}
+        </div>
+        <div style="margin-top: 8px;">
+          ${btnAcceptHTML}
+          ${btnTechPossibleHTML}
+          ${btnNoTechPossibleHTML}
+        </div>
+      `;
 
+      list.appendChild(li);
+    });
   }
 
   function logout() {
@@ -408,6 +405,7 @@
     setInterval(fetchRequests, 10000);
   }
 </script>
+
 
 </body>
 </html>
