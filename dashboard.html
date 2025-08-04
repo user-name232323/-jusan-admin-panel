@@ -346,27 +346,46 @@
     const statusName = getStatusNameById(req.status);
     const li = document.createElement('li');
 
-    // Проверяем, если статус "В работе" (2) — блокируем кнопку "Принять в работу"
-    const isInWork = req.status === 2;
+    // Какие кнопки показывать:
+    // Если статус 1 или другой (кроме 2,3,4) - показать "Принять в работу"
+    // Если статус 2 - показать "Есть тех возможность" (активная кнопка)
+    // Если статус 3 - нет "Принять в работу" и "Есть тех возможность"
+    // Если статус 4 - показать "Есть тех возможность" (заблокированная)
+    
+    let btnAcceptHTML = "";
+    let btnTechPossibleHTML = "";
+    let btnNoTechPossibleHTML = "";
+
+    if (req.status === 1 || req.status === undefined) {
+      btnAcceptHTML = `<button onclick="disableAndUpdate(this, ${req.id}, 2)" style="margin-right:8px;">Принять в работу</button>`;
+      btnNoTechPossibleHTML = `<button onclick="disableAndUpdate(this, ${req.id}, 3)" style="background-color: #ccc;">Нет технической возможности</button>`;
+    } else if (req.status === 2) {
+      btnTechPossibleHTML = `<button onclick="disableAndUpdate(this, ${req.id}, 4)" style="background-color: #4caf50; color: white; margin-right:8px;">Есть тех возможность</button>`;
+      btnNoTechPossibleHTML = `<button onclick="disableAndUpdate(this, ${req.id}, 3)" style="background-color: #ccc;">Нет технической возможности</button>`;
+    } else if (req.status === 3) {
+      btnAcceptHTML = `<button disabled style="margin-right:8px; background-color:#ccc;">Принять в работу</button>`;
+      btnTechPossibleHTML = ``; // не показывать
+      btnNoTechPossibleHTML = `<button disabled style="background-color:#ccc;">Нет технической возможности</button>`;
+    } else if (req.status === 4) {
+      btnTechPossibleHTML = `<button disabled style="background-color:#4caf50; color: white; margin-right:8px;">Есть тех возможность</button>`;
+      btnNoTechPossibleHTML = `<button onclick="disableAndUpdate(this, ${req.id}, 3)" style="background-color: #ccc;">Нет технической возможности</button>`;
+    } else {
+      // На всякий случай, если статус неожиданный
+      btnAcceptHTML = `<button onclick="disableAndUpdate(this, ${req.id}, 2)" style="margin-right:8px;">Принять в работу</button>`;
+      btnNoTechPossibleHTML = `<button onclick="disableAndUpdate(this, ${req.id}, 3)" style="background-color: #ccc;">Нет технической возможности</button>`;
+    }
 
     li.innerHTML = `
       <div>
         <span class="request-id">#${req.id}</span>
-        <span class="request-subject">${req.subject || ""}</span> —
+        <span class="request-subject">${req.subject || ""}</span> — 
         <span class="request-desc">${req.description || "(без описания)"}</span><br>
         <b>Статус:</b> ${statusName}
       </div>
       <div style="margin-top: 8px;">
-        <button
-          ${isInWork ? "disabled" : ""}
-          style="margin-right: 8px;"
-          onclick="disableAndUpdate(this, ${req.id}, 2)"
-        >
-          ${isInWork ? "В работе" : "Принять в работу"}
-        </button>
-        <button onclick="disableAndUpdate(this, ${req.id}, 3)" style="background-color: #ccc;">
-          Нет технической возможности
-        </button>
+        ${btnAcceptHTML}
+        ${btnTechPossibleHTML}
+        ${btnNoTechPossibleHTML}
       </div>
     `;
 
