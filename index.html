@@ -3,13 +3,134 @@
 <head>
   <meta charset="UTF-8">
   <title>Jusan Mobile - Админ панель</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f6f8;
+    }
+
+    .header {
+      background-color: #ff6600;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 30px;
+    }
+
+    .admin-text {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .user-panel {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-avatar {
+      height: 40px;
+      width: 40px;
+      border-radius: 50%;
+    }
+
+    .user-name {
+      font-weight: 500;
+    }
+
+    main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 80vh;
+    }
+
+    .login-box {
+      background: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .login-header img {
+      height: 50px;
+    }
+
+    .login-header h1 {
+      margin: 10px 0 0;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .input-icon {
+      display: flex;
+      align-items: center;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 8px 10px;
+      background-color: #fff;
+    }
+
+    .input-icon span {
+      margin-right: 8px;
+      font-size: 18px;
+    }
+
+    .input-icon input {
+      border: none;
+      outline: none;
+      flex: 1;
+      font-size: 14px;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 10px;
+      background-color: #ff6600;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #e05700;
+    }
+
+    .help-link {
+      display: block;
+      margin-top: 15px;
+      text-align: center;
+      font-size: 14px;
+      color: #555;
+      text-decoration: none;
+    }
+
+    .help-link:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
   <header class="header">
-    <div class="logo-full">
-      <img src="logo_admin.png" alt="JUSAN Mobile Logo">
-    </div>
     <div class="admin-text">Административная панель</div>
     <div class="user-panel">
       <img src="logo_admin4.png" alt="User Avatar" class="user-avatar">
@@ -20,17 +141,22 @@
   <main>
     <div class="login-box">
       <div class="login-header">
-        <img src="logo_admin.png" alt="Logo" />
         <h1>Вход</h1>
       </div>
       <form id="loginForm">
         <div class="input-group">
-          <label for="login">Логин</label>афцафцафцафцафцафц
-          <input type="text" id="login" placeholder="Введите логин" required />
+          <label for="login">Логин</label>
+          <div class="input-icon">
+            <span>📧</span>
+            <input type="text" id="login" placeholder="Введите логин" required />
+          </div>
         </div>
         <div class="input-group">
           <label for="password">Пароль</label>
-          <input type="password" id="password" placeholder="Введите пароль" required />
+          <div class="input-icon">
+            <span>🔒</span>
+            <input type="password" id="password" placeholder="Введите пароль" required />
+          </div>
         </div>
         <button type="submit">Войти</button>
         <a href="#" class="help-link">Нужна помощь со входом</a>
