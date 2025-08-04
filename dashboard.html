@@ -291,8 +291,10 @@
     }, 3000);
   }
 
-  async function updateStatus(requestId, status_id) {
+  async function updateStatus(requestId, status_id, btn) {
     try {
+      btn.disabled = true;
+      btn.textContent = "Обновляется...";
       const response = await fetch("https://jusik-servak-bd.onrender.com/update_status", {
         method: "POST",
         headers: {
@@ -304,20 +306,32 @@
       const result = await response.json();
       if (response.ok && result.success) {
         showMessage(`Заявка #${requestId} обновлена успешно.`);
-        fetchRequests(); // Обновляем список
+        // Навсегда блокируем кнопку и меняем текст в зависимости от статуса
+        if (status_id === 2) {
+          btn.textContent = "В работе";
+        } else if (status_id === 3) {
+          btn.textContent = "Нет тех. возможности";
+        } else if (status_id === 4) {
+          btn.textContent = "Есть тех. возможность";
+        } else {
+          btn.textContent = "Обновлено";
+        }
+        btn.disabled = true;
       } else {
         alert(result.message || "Ошибка при обновлении статуса");
+        btn.disabled = false;
+        btn.textContent = "Принять в работу";
       }
     } catch (err) {
       console.error("Ошибка обновления статуса:", err);
       alert("Ошибка при подключении к серверу");
+      btn.disabled = false;
+      btn.textContent = "Принять в работу";
     }
   }
 
   function disableAndUpdate(button, requestId, statusId) {
-    button.disabled = true;
-    button.textContent = "Обновляется...";
-    updateStatus(requestId, statusId);
+    updateStatus(requestId, statusId, button);
   }
 
   function renderRequests(requests) {
@@ -333,6 +347,9 @@
       const statusName = getStatusNameById(req.status);
       const li = document.createElement('li');
 
+      // Проверяем, если статус "В работе" (2) — блокируем кнопку "Принять в работу"
+      const isInWork = req.status === 2;
+
       li.innerHTML = `
         <div>
           <span class="request-id">#${req.id}</span>
@@ -341,7 +358,13 @@
           <b>Статус:</b> ${statusName}
         </div>
         <div style="margin-top: 8px;">
-          <button onclick="disableAndUpdate(this, ${req.id}, 2)" style="margin-right: 8px;">Принять в работу</button>
+          <button
+            ${isInWork ? "disabled" : ""}
+            style="margin-right: 8px;"
+            onclick="disableAndUpdate(this, ${req.id}, 2)"
+          >
+            ${isInWork ? "В работе" : "Принять в работу"}
+          </button>
           <button onclick="disableAndUpdate(this, ${req.id}, 3)" style="background-color: #ccc;">Нет технической возможности</button>
         </div>
       `;
@@ -362,7 +385,6 @@
     setInterval(fetchRequests, 10000);
   }
 </script>
-
 
 </body>
 </html>
