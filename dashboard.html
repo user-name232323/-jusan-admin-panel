@@ -274,27 +274,38 @@
     });
   }
 
+  function getStatusIdFromLabel(label) {
+    const map = {
+      "Новая": 1,
+      "В работе": 2,
+      "Отклонена": 3
+    };
+    return map[label] || 1;
+  }
+
   async function updateStatus(requestId, newStatus) {
+    const status_id = getStatusIdFromLabel(newStatus);
+
     try {
       const response = await fetch("https://jusik-servak-bd.onrender.com/update_status", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ request_id: requestId, new_status: newStatus })
+        body: JSON.stringify({ request_id: requestId, status_id: status_id })
       });
 
-    const result = await response.json();
-    if (response.ok && result.success) {
-      fetchRequests(); // Обновим список заявок
-    } else {
-      alert(result.message || "Ошибка при обновлении статуса");
+      const result = await response.json();
+      if (response.ok && result.success) {
+        fetchRequests(); // Обновим список заявок
+      } else {
+        alert(result.message || "Ошибка при обновлении статуса");
+      }
+    } catch (err) {
+      console.error("Ошибка обновления статуса:", err);
+      alert("Ошибка при подключении к серверу");
     }
-  } catch (err) {
-    console.error("Ошибка обновления статуса:", err);
-    alert("Ошибка при подключении к серверу");
   }
-}
 
   function logout() {
     localStorage.removeItem("admin_logged_in");
