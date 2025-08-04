@@ -333,44 +333,48 @@
   function disableAndUpdate(button, requestId, statusId) {
     updateStatus(requestId, statusId, button);
   }
-
   function renderRequests(requests) {
-    const list = document.getElementById('requests-list');
-    list.innerHTML = "";
+  const list = document.getElementById('requests-list');
+  list.innerHTML = "";
 
-    if (requests.length === 0) {
-      list.innerHTML = "<li>Нет заявок</li>";
-      return;
-    }
+  if (requests.length === 0) {
+    list.innerHTML = "<li>Нет заявок</li>";
+    return;
+  }
 
-    requests.forEach(req => {
-      const statusName = getStatusNameById(req.status);
-      const li = document.createElement('li');
+  requests.forEach(req => {
+    const statusName = getStatusNameById(req.status);
+    const li = document.createElement('li');
 
-      // Проверяем, если статус "В работе" (2) — блокируем кнопку "Принять в работу"
-      const isInWork = req.status === 2;
+    // Проверяем, если статус "В работе" (2) — блокируем кнопку "Принять в работу"
+    const isInWork = req.status === 2;
 
-      li.innerHTML = `
-        <div>
-          <span class="request-id">#${req.id}</span>
-          <span class="request-subject">${req.subject || ""}</span> —
-          <span class="request-desc">${req.description || "(без описания)"}</span><br>
-          <b>Статус:</b> ${statusName}
-        </div>
-        <div style="margin-top: 8px;">
-          <button
-            ${isInWork ? "disabled" : ""}
-            style="margin-right: 8px;"
-            onclick="disableAndUpdate(this, ${req.id}, 2)"
-          >
-            ${isInWork ? "В работе" : "Принять в работу"}
-          </button>
-          <button onclick="disableAndUpdate(this, ${req.id}, 3)" style="background-color: #ccc;">Нет технической возможности</button>
-        </div>
-      `;
+    li.innerHTML = `
+      <div>
+        <span class="request-id">#${req.id}</span>
+        <span class="request-subject">${req.subject || ""}</span> —
+        <span class="request-desc">${req.description || "(без описания)"}</span><br>
+        <b>Статус:</b> ${statusName}
+      </div>
+      <div style="margin-top: 8px;">
+        <button
+          ${isInWork ? "disabled" : ""}
+          style="margin-right: 8px;"
+          onclick="disableAndUpdate(this, ${req.id}, 2)"
+        >
+          ${isInWork ? "В работе" : "Принять в работу"}
+        </button>
+        <button onclick="disableAndUpdate(this, ${req.id}, 3)" style="background-color: #ccc;">
+          Нет технической возможности
+        </button>
+      </div>
+    `;
 
-      list.appendChild(li);
-    });
+    list.appendChild(li);
+  });
+
+
+
   }
 
   function logout() {
