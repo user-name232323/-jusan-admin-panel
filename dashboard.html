@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Jusan Admin Dashboard</title>
+  <title>Административная панель</title>
   <style>
     body {
       margin: 0;
@@ -17,25 +17,6 @@
       justify-content: space-between;
       padding: 15px 30px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .logo-full {
-      position: relative;
-      width: 70px;
-      height: 70px;
-    }
-    .logo-background {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 70px;
-      height: 70px;
-      opacity: 0.2;
-    }
-    .logo-foreground {
-      position: relative;
-      z-index: 2;
-      height: 50px;
-      margin-top: 10px;
     }
     .admin-text {
       font-size: 24px;
@@ -62,20 +43,17 @@
       color: #333;
       margin-bottom: 10px;
     }
-
     .departments-scroll {
       overflow-x: auto;
       padding: 10px 0;
       margin-bottom: 20px;
     }
-
     .department-buttons {
       display: flex;
       gap: 10px;
       flex-wrap: nowrap;
       width: max-content;
     }
-
     .department-button {
       background-color: #ff7f00;
       color: white;
@@ -87,15 +65,12 @@
       font-weight: bold;
       transition: background-color 0.3s;
     }
-
     .department-button:hover {
       background-color: #e06700;
     }
-
     .active-department {
       background-color: red;
     }
-
     #filter-bar {
       display: flex;
       gap: 10px;
@@ -149,15 +124,7 @@
 </head>
 <body>
 <header class="header">
-  <div class="logo-full">
-    <img src="logo_admin1.png" alt="Фон" class="logo-background">
-    <img src="logo_admin.png" alt="JUSAN Mobile Logo" class="logo-foreground">
-  </div>
-<<<<<<< HEAD
-  <div class="admin-text">Jusan Mobile</div>
-=======
   <div class="admin-text">Административная панель</div>
->>>>>>> 71e4cad (Кнопки над филтьром отделов)
   <div class="user-panel">
     <img src="logo_admin4.png" alt="User Avatar" class="user-avatar" onclick="logout()" title="Выйти">
     <span class="user-name">Администратор</span>
@@ -167,7 +134,6 @@
 <main>
   <h2>Добро пожаловать в панель администратора</h2>
 
-  <!-- БЛОК КНОПОК ОТДЕЛОВ -->
   <div class="departments-scroll">
     <div class="department-buttons">
       <button class="department-button active-department">Отдел развития и подключений</button>
