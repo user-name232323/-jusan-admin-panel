@@ -18,8 +18,24 @@
       padding: 15px 30px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    .logo-full img {
+    .logo-full {
+      position: relative;
+      width: 70px;
+      height: 70px;
+    }
+    .logo-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 70px;
+      height: 70px;
+      opacity: 0.2;
+    }
+    .logo-foreground {
+      position: relative;
+      z-index: 2;
       height: 50px;
+      margin-top: 10px;
     }
     .admin-text {
       font-size: 24px;
@@ -100,9 +116,10 @@
 <body>
 <header class="header">
   <div class="logo-full">
-    <img src="logo_admin.png" alt="JUSAN Mobile Logo">
+    <img src="logo_admin1.png" alt="Фон" class="logo-background">
+    <img src="logo_admin.png" alt="JUSAN Mobile Logo" class="logo-foreground">
   </div>
-  <div class="admin-text">Админ-панель</div>
+  <div class="admin-text">Jusan Mobile</div>
   <div class="user-panel">
     <img src="logo_admin4.png" alt="User Avatar" class="user-avatar" onclick="logout()" title="Выйти">
     <span class="user-name">Администратор</span>
