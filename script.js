@@ -38,12 +38,13 @@ if (window.location.pathname.includes("dashboard.html")) {
   }
 
   function getStatusIdFromLabel(label) {
-    const map = {
-      "В работе": 2,
-      "Нет тех возможности": 3
-    };
-    return map[label] || null;
-  }
+  const map = {
+    "В работе": 2,
+    "Нет тех возможности": 3,
+    "Есть тех возможность": 4
+  };
+  return map[label] || null;
+}
 
   // 👇 Показываем сообщение
   function showMessage(text) {
