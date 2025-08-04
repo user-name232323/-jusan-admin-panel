@@ -261,7 +261,7 @@
     const city = document.getElementById("filter-city").value.toLowerCase();
     const street = document.getElementById("filter-street").value.toLowerCase();
     const house = document.getElementById("filter-house").value.toLowerCase();
-    const status = document.getElementById("filter-status").value; // id статуса (строка с цифрой)
+    const status = document.getElementById("filter-status").value;
     const search = document.getElementById("filter-search").value.toLowerCase();
 
     const filtered = allRequests.filter(req => {
@@ -282,7 +282,6 @@
     renderRequests(filtered);
   }
 
-  // Показываем сообщение в углу
   function showMessage(text) {
     const box = document.getElementById("message-box");
     box.textContent = text;
@@ -305,7 +304,7 @@
       const result = await response.json();
       if (response.ok && result.success) {
         showMessage(`Заявка #${requestId} обновлена успешно.`);
-        fetchRequests();
+        fetchRequests(); // Обновляем список
       } else {
         alert(result.message || "Ошибка при обновлении статуса");
       }
@@ -313,6 +312,12 @@
       console.error("Ошибка обновления статуса:", err);
       alert("Ошибка при подключении к серверу");
     }
+  }
+
+  function disableAndUpdate(button, requestId, statusId) {
+    button.disabled = true;
+    button.textContent = "Обновляется...";
+    updateStatus(requestId, statusId);
   }
 
   function renderRequests(requests) {
@@ -327,6 +332,7 @@
     requests.forEach(req => {
       const statusName = getStatusNameById(req.status);
       const li = document.createElement('li');
+
       li.innerHTML = `
         <div>
           <span class="request-id">#${req.id}</span>
@@ -335,10 +341,11 @@
           <b>Статус:</b> ${statusName}
         </div>
         <div style="margin-top: 8px;">
-          <button onclick="updateStatus(${req.id}, 2)" style="margin-right: 8px;">Принять в работу</button>
-          <button onclick="updateStatus(${req.id}, 3)" style="background-color: #ccc;">Нет технической возможности</button>
+          <button onclick="disableAndUpdate(this, ${req.id}, 2)" style="margin-right: 8px;">Принять в работу</button>
+          <button onclick="disableAndUpdate(this, ${req.id}, 3)" style="background-color: #ccc;">Нет технической возможности</button>
         </div>
       `;
+
       list.appendChild(li);
     });
   }
@@ -355,6 +362,7 @@
     setInterval(fetchRequests, 10000);
   }
 </script>
+
 
 </body>
 </html>

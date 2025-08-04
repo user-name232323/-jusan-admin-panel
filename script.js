@@ -12,7 +12,7 @@ if (document.getElementById("loginForm")) {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ name, password }) // 👈 строго name, а не username
+        body: JSON.stringify({ name, password })
       });
 
       const result = await response.json();
@@ -35,16 +35,43 @@ if (window.location.pathname.includes("dashboard.html")) {
   function logout() {
     localStorage.removeItem("admin_logged_in");
     window.location.href = "index.html";
-  } 
+  }
 
-  // 👇 Статус строки -> ID статуса (подставь свои ID из БД)
   function getStatusIdFromLabel(label) {
     const map = {
       "В работе": 2,
       "Нет тех возможности": 3
-      // Добавь сюда другие статусы по необходимости
     };
     return map[label] || null;
+  }
+
+  // 👇 Показываем сообщение
+  function showMessage(text) {
+    let box = document.getElementById("message-box");
+    if (!box) {
+      box = document.createElement("div");
+      box.id = "message-box";
+      Object.assign(box.style, {
+        position: "fixed",
+        top: "10px",
+        right: "10px",
+        background: "#4caf50",
+        color: "white",
+        padding: "10px 20px",
+        borderRadius: "5px",
+        boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+        fontWeight: "600",
+        userSelect: "none",
+        zIndex: "1000",
+        display: "none",
+      });
+      document.body.appendChild(box);
+    }
+    box.textContent = text;
+    box.style.display = "block";
+    setTimeout(() => {
+      box.style.display = "none";
+    }, 3000);
   }
 
   async function updateStatus(id, statusLabel) {
@@ -61,12 +88,13 @@ if (window.location.pathname.includes("dashboard.html")) {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ request_id: id, status_id }) // ✅ request_id и status_id
+        body: JSON.stringify({ request_id: id, status_id })
       });
 
       const result = await response.json();
       if (result.success) {
-        fetchRequests(); // Обновить список после изменения статуса
+        showMessage(`Заявка #${id} обновлена: ${statusLabel}`);
+        fetchRequests();
       } else {
         alert(result.message || "Ошибка при обновлении статуса");
       }
@@ -104,7 +132,7 @@ if (window.location.pathname.includes("dashboard.html")) {
         list.appendChild(li);
       });
 
-      // Назначаем обработчики после рендера кнопок
+      // Назначаем обработчики после рендера
       document.querySelectorAll(".btn-work").forEach(btn => {
         btn.onclick = () => updateStatus(btn.dataset.id, "В работе");
       });
@@ -118,12 +146,11 @@ if (window.location.pathname.includes("dashboard.html")) {
     }
   }
 
-  // Проверка авторизации
   if (localStorage.getItem("admin_logged_in") !== "true") {
     window.location.href = "index.html";
   } else {
     fetchRequests();
-    setInterval(fetchRequests, 10000); // Автообновление каждые 10 сек
+    setInterval(fetchRequests, 10000);
   }
 
   const avatar = document.querySelector(".user-avatar");
