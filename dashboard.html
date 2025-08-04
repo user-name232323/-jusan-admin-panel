@@ -266,8 +266,8 @@
           <b>Статус:</b> ${req.status}
         </div>
         <div style="margin-top: 8px;">
-          <button onclick="updateStatus(${req.id}, 2)" style="margin-right: 8px;">Принять в работу</button>
-          <button onclick="updateStatus(${req.id}, 3)" style="background-color: #ccc;">Отклонить</button>
+          <button onclick="updateStatus(${req.id}, 'В работе')" style="margin-right: 8px;">Принять в работу</button>
+          <button onclick="updateStatus(${req.id}, 'Нет тех возможности')" style="background-color: #ccc;">Отклонить</button>
         </div>
       `;
       list.appendChild(li);
