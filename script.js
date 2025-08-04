@@ -37,12 +37,12 @@ if (window.location.pathname.includes("dashboard.html")) {
     window.location.href = "index.html";
   }
 
-  // 👇 статус строка -> статус ID (обязательное требование сервера)
+  // 👇 Статус строки -> ID статуса (подставь свои ID из БД)
   function getStatusIdFromLabel(label) {
     const map = {
-      "В работе": 1,
-      "Нет тех возможности": 2
-      // Добавь сюда другие статусы, если нужно
+      "В работе": 2,
+      "Нет тех возможности": 3
+      // Добавь сюда другие статусы по необходимости
     };
     return map[label] || null;
   }
@@ -61,12 +61,12 @@ if (window.location.pathname.includes("dashboard.html")) {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ request_id: id, status_id }) // ✅ теперь request_id и status_id
+        body: JSON.stringify({ request_id: id, status_id }) // ✅ request_id и status_id
       });
 
       const result = await response.json();
       if (result.success) {
-        fetchRequests(); // перезагрузить список после обновления
+        fetchRequests(); // Обновить список после изменения статуса
       } else {
         alert(result.message || "Ошибка при обновлении статуса");
       }
@@ -109,11 +109,12 @@ if (window.location.pathname.includes("dashboard.html")) {
     }
   }
 
+  // Проверка авторизации
   if (localStorage.getItem("admin_logged_in") !== "true") {
     window.location.href = "index.html";
   } else {
     fetchRequests();
-    setInterval(fetchRequests, 10000); // обновлять заявки каждые 10 сек
+    setInterval(fetchRequests, 10000); // Автообновление каждые 10 сек
   }
 
   const avatar = document.querySelector(".user-avatar");
