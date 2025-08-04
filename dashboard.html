@@ -286,7 +286,7 @@
 
       const result = await response.json();
       if (response.ok && result.success) {
-        fetchRequests(); // Обновим список заявок
+        fetchRequests();
       } else {
         alert(result.message || "Ошибка при обновлении статуса");
       }
@@ -305,7 +305,7 @@
     window.location.href = "index.html";
   } else {
     fetchRequests();
-    setInterval(fetchRequests, 10000); // обновлять заявки каждые 10 секунд
+    setInterval(fetchRequests, 10000);
   }
 </script>
 
