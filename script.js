@@ -35,7 +35,7 @@ if (window.location.pathname.includes("dashboard.html")) {
   function logout() {
     localStorage.removeItem("admin_logged_in");
     window.location.href = "index.html";
-  }
+  } 
 
   // 👇 Статус строки -> ID статуса (подставь свои ID из БД)
   function getStatusIdFromLabel(label) {
@@ -96,13 +96,22 @@ if (window.location.pathname.includes("dashboard.html")) {
             <strong>#${request.id}</strong> — ${request.subject}<br>
             <em>${request.description}</em><br>
             <span><b>Статус:</b> ${request.status}</span><br>
-            <button onclick="updateStatus(${request.id}, 'В работе')">Принять в работу</button>
-            <button onclick="updateStatus(${request.id}, 'Нет тех возможности')">Отклонить</button>
+            <button class="btn-work" data-id="${request.id}">Принять в работу</button>
+            <button class="btn-no-tech" data-id="${request.id}">Отклонить</button>
           </div>
           <hr>
         `;
         list.appendChild(li);
       });
+
+      // Назначаем обработчики после рендера кнопок
+      document.querySelectorAll(".btn-work").forEach(btn => {
+        btn.onclick = () => updateStatus(btn.dataset.id, "В работе");
+      });
+      document.querySelectorAll(".btn-no-tech").forEach(btn => {
+        btn.onclick = () => updateStatus(btn.dataset.id, "Нет тех возможности");
+      });
+
     } catch (err) {
       document.getElementById('requests-list').innerHTML = "<li>Ошибка загрузки</li>";
       console.error(err);
