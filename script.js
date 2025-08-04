@@ -1,7 +1,7 @@
 // ======== index.html ========
 if (document.getElementById("loginForm")) {
   document.getElementById("loginForm").addEventListener("submit", async function(event) {
-    event.preventDefault(); // отключаем стандартную отправку формы
+    event.preventDefault();
 
     const name = document.getElementById("login").value;
     const password = document.getElementById("password").value;
@@ -37,6 +37,28 @@ if (window.location.pathname.includes("dashboard.html")) {
     window.location.href = "index.html";
   }
 
+  async function updateStatus(id, newStatus) {
+    try {
+      const response = await fetch("https://jusik-servak-bd.onrender.com/update_status", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ request_id: id, status: newStatus }) // ✅ исправлено имя поля
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        fetchRequests(); // перезагрузить список после обновления
+      } else {
+        alert(result.message || "Ошибка при обновлении статуса");
+      }
+    } catch (error) {
+      console.error("Ошибка обновления статуса:", error);
+      alert("Ошибка при обновлении статуса");
+    }
+  }
+
   async function fetchRequests() {
     try {
       const response = await fetch("https://jusik-servak-bd.onrender.com/requests");
@@ -53,9 +75,14 @@ if (window.location.pathname.includes("dashboard.html")) {
       data.forEach(request => {
         const li = document.createElement('li');
         li.innerHTML = `
-          <span class="request-id">#${request.id}</span>
-          <span class="request-subject">${request.subject}</span> —
-          <span class="request-desc">${request.description}</span>
+          <div>
+            <strong>#${request.id}</strong> — ${request.subject}<br>
+            <em>${request.description}</em><br>
+            <span><b>Статус:</b> ${request.status}</span><br>
+            <button onclick="updateStatus(${request.id}, 'В работе')">Принять в работу</button>
+            <button onclick="updateStatus(${request.id}, 'Нет тех возможности')">Отклонить</button>
+          </div>
+          <hr>
         `;
         list.appendChild(li);
       });
@@ -65,15 +92,13 @@ if (window.location.pathname.includes("dashboard.html")) {
     }
   }
 
-  // Проверка авторизации и запуск цикла обновления
   if (localStorage.getItem("admin_logged_in") !== "true") {
     window.location.href = "index.html";
   } else {
     fetchRequests();
-    setInterval(fetchRequests, 10000); // обновление каждые 10 секунд
+    setInterval(fetchRequests, 10000);
   }
 
-  // Привязка logout к аватарке (если нужно)
   const avatar = document.querySelector(".user-avatar");
   if (avatar) {
     avatar.addEventListener("click", logout);
