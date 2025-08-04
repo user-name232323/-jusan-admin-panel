@@ -37,14 +37,31 @@ if (window.location.pathname.includes("dashboard.html")) {
     window.location.href = "index.html";
   }
 
-  async function updateStatus(id, newStatus) {
+  // 👇 статус строка -> статус ID (обязательное требование сервера)
+  function getStatusIdFromLabel(label) {
+    const map = {
+      "В работе": 1,
+      "Нет тех возможности": 2
+      // Добавь сюда другие статусы, если нужно
+    };
+    return map[label] || null;
+  }
+
+  async function updateStatus(id, statusLabel) {
+    const status_id = getStatusIdFromLabel(statusLabel);
+
+    if (!status_id) {
+      alert("Неизвестный статус: " + statusLabel);
+      return;
+    }
+
     try {
       const response = await fetch("https://jusik-servak-bd.onrender.com/update_status", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ request_id: id, status: newStatus }) // ✅ исправлено имя поля
+        body: JSON.stringify({ request_id: id, status_id }) // ✅ теперь request_id и status_id
       });
 
       const result = await response.json();
@@ -96,7 +113,7 @@ if (window.location.pathname.includes("dashboard.html")) {
     window.location.href = "index.html";
   } else {
     fetchRequests();
-    setInterval(fetchRequests, 10000);
+    setInterval(fetchRequests, 10000); // обновлять заявки каждые 10 сек
   }
 
   const avatar = document.querySelector(".user-avatar");
