@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Административная панель</title>
   <style>
     body {
@@ -126,7 +126,7 @@
 <header class="header">
   <div class="admin-text">Административная панель</div>
   <div class="user-panel">
-    <img src="logo_admin4.png" alt="User Avatar" class="user-avatar" onclick="logout()" title="Выйти">
+    <img src="logo_admin4.png" alt="User Avatar" class="user-avatar" onclick="logout()" title="Выйти" />
     <span class="user-name">Администратор</span>
   </div>
 </header>
@@ -155,8 +155,14 @@
     <select id="filter-city"><option value="">Город</option></select>
     <select id="filter-street"><option value="">Улица</option></select>
     <select id="filter-house"><option value="">Дом</option></select>
-    <select id="filter-status"><option value="">Статус</option><option>Новая</option></select>
-    <input type="text" id="filter-search" placeholder="Поиск...">
+    <select id="filter-status">
+      <option value="">Статус</option>
+      <option value="1">В ожидании</option>
+      <option value="2">В работе</option>
+      <option value="3">Нет тех возможности</option>
+      <option value="4">Есть тех возможность</option>
+    </select>
+    <input type="text" id="filter-search" placeholder="Поиск..." />
     <button onclick="applyFilters()">Применить</button>
   </div>
 
@@ -184,6 +190,16 @@
   function extractHouse(description) {
     const match = description.match(/дом\s+([^,.\n]+)/i);
     return match ? match[1].trim() : "";
+  }
+
+  function getStatusNameById(id) {
+    const names = {
+      1: "В ожидании",
+      2: "В работе",
+      3: "Нет тех возможности",
+      4: "Есть тех возможность"
+    };
+    return names[id] || "Неизвестный статус";
   }
 
   async function fetchRequests() {
@@ -226,12 +242,12 @@
     const city = document.getElementById("filter-city").value.toLowerCase();
     const street = document.getElementById("filter-street").value.toLowerCase();
     const house = document.getElementById("filter-house").value.toLowerCase();
-    const status = document.getElementById("filter-status").value.toLowerCase();
+    const status = document.getElementById("filter-status").value; // id статуса (строка с цифрой)
     const search = document.getElementById("filter-search").value.toLowerCase();
 
     const filtered = allRequests.filter(req => {
       const desc = (req.description || "").toLowerCase();
-      const stat = (req.status || "").toLowerCase();
+      const stat = req.status ? req.status.toString() : "";
 
       const matchCity = extractCity(desc).toLowerCase();
       const matchStreet = extractStreet(desc).toLowerCase();
@@ -257,17 +273,18 @@
     }
 
     requests.forEach(req => {
+      const statusName = getStatusNameById(req.status);
       const li = document.createElement('li');
       li.innerHTML = `
         <div>
           <span class="request-id">#${req.id}</span>
           <span class="request-subject">${req.subject || ""}</span> —
           <span class="request-desc">${req.description || "(без описания)"}</span><br>
-          <b>Статус:</b> ${req.status}
+          <b>Статус:</b> ${statusName}
         </div>
         <div style="margin-top: 8px;">
-          <button onclick="updateStatus(${req.id}, 'В работе')" style="margin-right: 8px;">Принять в работу</button>
-          <button onclick="updateStatus(${req.id}, 'Нет тех возможности')" style="background-color: #ccc;">Отклонить</button>
+          <button onclick="updateStatus(${req.id}, 2)" style="margin-right: 8px;">Принять в работу</button>
+          <button onclick="updateStatus(${req.id}, 3)" style="background-color: #ccc;">Отклонить</button>
         </div>
       `;
       list.appendChild(li);
