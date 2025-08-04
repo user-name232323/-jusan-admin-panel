@@ -62,6 +62,40 @@
       color: #333;
       margin-bottom: 10px;
     }
+
+    .departments-scroll {
+      overflow-x: auto;
+      padding: 10px 0;
+      margin-bottom: 20px;
+    }
+
+    .department-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: nowrap;
+      width: max-content;
+    }
+
+    .department-button {
+      background-color: #ff7f00;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      white-space: nowrap;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    .department-button:hover {
+      background-color: #e06700;
+    }
+
+    .active-department {
+      background-color: red;
+    }
+
     #filter-bar {
       display: flex;
       gap: 10px;
@@ -119,7 +153,11 @@
     <img src="logo_admin1.png" alt="Фон" class="logo-background">
     <img src="logo_admin.png" alt="JUSAN Mobile Logo" class="logo-foreground">
   </div>
+<<<<<<< HEAD
   <div class="admin-text">Jusan Mobile</div>
+=======
+  <div class="admin-text">Административная панель</div>
+>>>>>>> 71e4cad (Кнопки над филтьром отделов)
   <div class="user-panel">
     <img src="logo_admin4.png" alt="User Avatar" class="user-avatar" onclick="logout()" title="Выйти">
     <span class="user-name">Администратор</span>
@@ -128,6 +166,25 @@
 
 <main>
   <h2>Добро пожаловать в панель администратора</h2>
+
+  <!-- БЛОК КНОПОК ОТДЕЛОВ -->
+  <div class="departments-scroll">
+    <div class="department-buttons">
+      <button class="department-button active-department">Отдел развития и подключений</button>
+      <button class="department-button">Коммерческий блок</button>
+      <button class="department-button">Департамент маркетинга</button>
+      <button class="department-button">Юридический департамент</button>
+      <button class="department-button">Департамент эксплуатации</button>
+      <button class="department-button">Call центр</button>
+      <button class="department-button">Один менеджер</button>
+      <button class="department-button">Департамент обслуживания клиентов</button>
+      <button class="department-button">Бухгалтерия</button>
+      <button class="department-button">IT department</button>
+      <button class="department-button">[Пусто]</button>
+      <button class="department-button">[Пусто]</button>
+    </div>
+  </div>
+
   <div id="filter-bar">
     <select id="filter-city"><option value="">Город</option></select>
     <select id="filter-street"><option value="">Улица</option></select>
@@ -136,6 +193,7 @@
     <input type="text" id="filter-search" placeholder="Поиск...">
     <button onclick="applyFilters()">Применить</button>
   </div>
+
   <div id="requests-container">
     <h3>Заявки пользователей:</h3>
     <ul id="requests-list">
